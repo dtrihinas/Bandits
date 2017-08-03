@@ -1,6 +1,6 @@
 EpsilonGreedyBandit <- function (n, e = 0.1) {
   if (n < 0 || e < 0.0) stop("narms must be > 0 and epsilon must be in range [0,1]")
-  value <- list(narms=n, epsilon=e, cnts = matrix(0, ncol = n), vals = matrix(0, ncol = n))
+  value <- list(narms=n, epsilon=e, cnts = matrix(0, ncol = n), vals = matrix(0, ncol = n), alpha = 0.3)
   
   attr(value, "class") <- "EpsilonGreedyBandit"
   
@@ -24,7 +24,9 @@ updateBandit.EpsilonGreedyBandit <- function(bandit, chosen_arm, reward) {
   n <- bandit$cnts[chosen_arm]
   
   old_v <- bandit$vals[chosen_arm]
-  new_v <- ((n - 1) / n) * old_v + (1 / n) * reward
+  #new_v <- ((n - 1) / n) * old_v + (1 / n) * reward
+  #EWMA
+  new_v <- (1 - bandit$alpha) * old_v + bandit$alpha* reward
   bandit$vals[chosen_arm] <- new_v
   
   return(bandit)
